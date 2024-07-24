@@ -16,6 +16,7 @@ const jwt = require("jsonwebtoken");
 const promisify = require("util").promisify;
 const promisifiedJWTSign = promisify(jwt.sign);
 const promisifiedJWTVerify = promisify(jwt.verify);
+const bcrypt = require("bcrypt");
 
 const otpGenerator = require("./../utilities/otpGenerator/otpGenerator");
 const {sendEmailHelper} = require("./../utilities/EmailService/dynamicMailSender");
@@ -45,8 +46,8 @@ const loginController = async (req, res) => {
         const user = await UserModel.findOne(emailId);
         console.log(user);
         if(user){
-            if(password === user.password){
-                console.log(JWT_SECRET);
+            const isAuthenticated = await bcrypt.compare(password, user.password);
+            if(isAuthenticated){
                 let token = await promisifiedJWTSign({id: user["_id"]}, JWT_SECRET);
                 console.log("sending toker for login");
                 res.cookie("JWT", token, {maxAge: 90000000, httpOnly: true, path: "/"});

@@ -4,7 +4,7 @@ dotEnv.config();
 const capProject = express();
 
 const rateLimiter = require('express-rate-limit');
-capProject.use(rateLimiter);
+// capProject.use(rateLimiter);
 
 const cors = require('cors');
 // capProject.use(cors());
@@ -17,7 +17,7 @@ capProject.use(cors(corsConfig));
 capProject.options('*', cors(corsConfig));
 
 const helmet=require("helmet");
-app.use(helmet());
+capProject.use(helmet());
 
 
 const cookieParser = require('cookie-parser');
@@ -54,7 +54,7 @@ const serverStartFunction = function (port) {
 
 const userRouter = require('./router/userRouter.js');
 const productRouter = require('./router/productRouter.js');
-const userMangementRouter = require('./router/userManagementRouter.js');
+const authRouter = require('./router/authRouter.js');
 const paymentRouter = require('./router/paymentRouter.js');
 const BookingRouter = require("./router/bookingRouter");
 const ReviewRouter = require("./router/ReviewRouter");
@@ -69,7 +69,7 @@ capProject.use(mongoSanitize());
 capProject.use('/home', homeFuntion);
 capProject.use('/api/user', userRouter);
 capProject.use('/api/product', productRouter);
-capProject.use('/api/userManagement', userMangementRouter);
+capProject.use('/api/auth', authRouter);
 capProject.use('/api/payment', paymentRouter);
 capProject.use("/api/booking", BookingRouter);
 capProject.use("/api/review",ReviewRouter);
