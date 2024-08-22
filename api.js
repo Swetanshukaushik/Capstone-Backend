@@ -1,7 +1,44 @@
 const express = require('express');
 const dotEnv = require('dotenv');
 dotEnv.config();
+// const capProject = express();
+
+// ------------------WEb Socket---------------
+const http = require("http");
 const capProject = express();
+const app = http.createServer(capProject);
+const socketIo = require('socket.io');
+const io = new socketIo.Server(app);
+// capProject.use(express.static('public'));
+
+let room;
+io.on('connection',function(socket){
+    console.log("Socket "+ socket.id + " is connected");
+    socket.broadcast.emit('message_from_BE_server', 'i am connected');
+
+    socket.on('add_to_list_message', function(data){
+        console.log(" on message VBE");
+        socket.broadcast.emit("item_message_from_BE", data);
+    })
+
+    socket.on('create_group', function(currentRoom){
+        room = currentRoom;
+        console.log("group create at BE");
+        socket.join(currentRoom);
+    })
+
+    socket.on('join_group', function(){
+        console.log(socket.id + " joined the group");
+        socket.join(room)
+    })
+
+    socket.on("group_message", function(data){
+        socket.to(room).emit("serve_group_mesage", data);
+    })
+})
+
+
+//-------------------------------------
 
 const rateLimiter = require('express-rate-limit');
 // capProject.use(rateLimiter);
@@ -74,8 +111,6 @@ capProject.use('/api/payment', paymentRouter);
 capProject.use("/api/booking", BookingRouter);
 capProject.use("/api/review",ReviewRouter);
 
-
-
 capProject.use(function (req, res) {
     console.log("Route not found");
     res.status(500).json({
@@ -85,6 +120,3 @@ capProject.use(function (req, res) {
 });
 
 capProject.listen(PORT || 4000, serverStartFunction);
-
-
-

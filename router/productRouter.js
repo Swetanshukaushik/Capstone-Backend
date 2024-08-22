@@ -2,7 +2,9 @@ const express = require('express');
 const productRouter = express.Router();
 const {getProductByIdHandler, createProductHandler, deleteProductByIdHandler} 
     = require('./../controller/productController');
-const productModel = require('../model/ProductModel');
+const {productModel} = require('../model/ProductModel');
+const {validCategories} = require('../model/ProductModel');
+
 
 const getAllProductHandler = async function(req,res){
     try{
@@ -39,10 +41,24 @@ const getAllProductHandler = async function(req,res){
             message: err.message
         });
     }
+}
 
+const getProductCategories = async function(req, res){
+    try{
+        res.status(200).json({
+            status:'success',
+            data: validCategories
+        });
+    }catch (err){
+        res.status(500).json({
+            status: 'failure',
+            message: err.message
+        });
+    }
 }
 
 productRouter.get('/', getAllProductHandler);
+productRouter.get('/categories', getProductCategories);
 productRouter.get('/:productId', getProductByIdHandler);
 productRouter.post('/create', createProductHandler);
 productRouter.delete('/:productId', deleteProductByIdHandler);

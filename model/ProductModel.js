@@ -57,7 +57,7 @@ const productSchemaRules = {
 
 const productSchema = mongoose.Schema(productSchemaRules);
 
-let validCategories = ['Electronics', "Audio", 'Clothing', 'Accessories',"Shoes","Fashion"];
+const validCategories = ['Electronics', "Audio", 'Clothing', 'Accessories', "Shoes", "Fashion", "Jewelry"];
 
 productSchema.pre("save", function(next){
     const product = this;
@@ -77,4 +77,4 @@ productSchema.pre("save", function(next){
 
 const productModel = mongoose.model("productModel",productSchema);
 
-module.exports = productModel;
+module.exports = {productModel, validCategories};
